@@ -1,5 +1,6 @@
 package com.lingolab.usermanagement.controller;
 
+import com.lingolab.usermanagement.model.ApiResponse;
 import com.lingolab.usermanagement.model.AuthenticationRequest;
 import com.lingolab.usermanagement.model.AuthenticationResponse;
 import com.lingolab.usermanagement.model.User;
@@ -26,9 +27,15 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<ApiResponse> registerUser(@RequestBody User user) {
+        try {
+            User registeredUser = userService.registerUser(user);
+            return ResponseEntity.ok(new ApiResponse(true, "User registered successfully"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ApiResponse(false, e.getMessage()));
+        }
     }
 
     @PostMapping("/authenticate")

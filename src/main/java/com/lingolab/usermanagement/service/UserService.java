@@ -23,7 +23,13 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(User user) {
+    public User registerUser(User user) throws Exception {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new Exception("Username is already taken: " + user.getUsername());
+        }
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {  // If checking emails
+            throw new Exception("Email is already in use: " + user.getEmail());
+        }
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         return userRepository.save(user);
