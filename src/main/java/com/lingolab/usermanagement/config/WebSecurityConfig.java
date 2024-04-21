@@ -34,7 +34,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/v3/api-docs/*").permitAll()
                         .requestMatchers("/swagger-ui/*").permitAll()// Permit
                         .requestMatchers("/api/auth/**").permitAll()  // Allow all requests to auth endpoints
-                        //.requestMatchers("/api/user/languages/**").permitAll()  // Allow all requests to auth endpoints
+                        .requestMatchers("/api/user/languages/unregister").permitAll()
                         .requestMatchers("/api/secure/**").authenticated()  // Only authenticated users can access secure endpoints
                         .anyRequest().authenticated())  // Require authentication for all other requests
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Ensure the session is stateless

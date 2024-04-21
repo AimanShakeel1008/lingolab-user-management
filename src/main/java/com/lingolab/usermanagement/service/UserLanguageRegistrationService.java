@@ -6,6 +6,7 @@ import com.lingolab.usermanagement.model.UserLanguageDto;
 import com.lingolab.usermanagement.model.UserLanguageRegistration;
 import com.lingolab.usermanagement.repository.UserLanguageRegistrationRepository;
 import com.lingolab.usermanagement.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class UserLanguageRegistrationService {
         dto.setRegistrationDate(registration.getRegistrationDate());
         String languageName = fetchLanguageName(registration.getLanguageId());
         LanguageDto languageDto = new LanguageDto();
-        languageDto.setId(registration.getId());
+        languageDto.setId(registration.getLanguageId());
         languageDto.setName(languageName);
         dto.setLanguage(languageDto);
         dto.setProgress(50);  // Dummy progress
@@ -61,17 +62,36 @@ public class UserLanguageRegistrationService {
     }
 
 
-    public UserLanguageRegistration registerLanguage(Long userId, Long languageId) {
+    public UserLanguageRegistration registerLanguage(String username, Long languageId) {
         // Optionally, verify the language exists by calling the Language Management Service
         if (!languageExists(languageId)) {
             throw new IllegalArgumentException("Language with ID " + languageId + " does not exist.");
         }
 
         UserLanguageRegistration registration = new UserLanguageRegistration();
-        registration.setUserId(userId);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        if (registrationRepository.existsByUserIdAndLanguageId(user.getId(), languageId)) {
+            throw new IllegalStateException("User is already registered for this language");
+        }
+
+        registration.setUserId(user.getId());
         registration.setLanguageId(languageId);
         registration.setRegistrationDate(LocalDateTime.now());
         return registrationRepository.save(registration);
+    }
+
+    @Transactional
+    public void unregisterLanguage(String username, Long languageId) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        UserLanguageRegistration registration = registrationRepository.findByUserIdAndLanguageId(user.getId(), languageId)
+                .orElseThrow(() -> new IllegalStateException("Registration not found for the given user and language"));
+
+        registrationRepository.delete(registration);
     }
 
     private boolean languageExists(Long languageId) {

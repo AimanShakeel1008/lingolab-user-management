@@ -2,6 +2,7 @@ package com.lingolab.usermanagement.controller;
 
 import com.lingolab.usermanagement.model.UserLanguageDto;
 import com.lingolab.usermanagement.model.UserLanguageRegistration;
+import com.lingolab.usermanagement.model.UserLanguageRegistrationRequest;
 import com.lingolab.usermanagement.service.UserLanguageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,24 @@ public class UserLanguageRegistrationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserLanguageRegistration> registerLanguage(@RequestParam Long userId, @RequestParam Long languageId) {
-        System.out.println("userId:"+userId+":::"+"language id:"+languageId);
-        UserLanguageRegistration registration = userLanguageRegistrationService.registerLanguage(userId, languageId);
-        return ResponseEntity.ok(registration);
+    public ResponseEntity<?> registerLanguage(@RequestBody UserLanguageRegistrationRequest userLanguageRegistrationRequest) {
+        try {
+            UserLanguageRegistration registration = userLanguageRegistrationService.registerLanguage(userLanguageRegistrationRequest.getUsername(),
+                    userLanguageRegistrationRequest.getLanguageId());
+            return ResponseEntity.ok(registration);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/unregister/{username}/{languageId}")
+    public ResponseEntity<?> unregisterLanguage(@PathVariable String username, @PathVariable Long languageId) {
+        try {
+            userLanguageRegistrationService.unregisterLanguage(username, languageId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
 
