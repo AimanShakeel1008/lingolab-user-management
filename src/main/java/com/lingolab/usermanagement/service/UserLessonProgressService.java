@@ -26,7 +26,6 @@ public class UserLessonProgressService {
 
         Optional<UserLessonProgress> existingProgress = userLessonProgressRepository.findByUserIdAndLessonId(user.getId(), lessonId);
 
-
         UserLessonProgress userLessonProgress = existingProgress.orElse(new UserLessonProgress());
         userLessonProgress.setUserId(user.getId());
         userLessonProgress.setLessonId(lessonId);
