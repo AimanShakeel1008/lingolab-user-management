@@ -63,7 +63,6 @@ public class UserLanguageRegistrationService {
 
 
     public UserLanguageRegistration registerLanguage(String username, Long languageId) {
-        // Optionally, verify the language exists by calling the Language Management Service
         if (!languageExists(languageId)) {
             throw new IllegalArgumentException("Language with ID " + languageId + " does not exist.");
         }
