@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,5 +34,13 @@ public class UserLessonProgressService {
         userLessonProgress.setCompletionDate(LocalDateTime.now());
 
         return userLessonProgressRepository.save(userLessonProgress);
+    }
+
+    public List<UserLessonProgress> getUserLessonProgress(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        return userLessonProgressRepository.findByUserId(user.getId());
+
     }
 }

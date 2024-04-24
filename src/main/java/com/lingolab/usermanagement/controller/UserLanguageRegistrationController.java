@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user/languages")
+@RequestMapping("/api/users")
 public class UserLanguageRegistrationController {
     @Autowired
     private UserLanguageRegistrationService userLanguageRegistrationService;
 
-    @GetMapping("/registrations")
+    @GetMapping("/languages/registrations")
     public ResponseEntity<List<UserLanguageDto>> getRegistrationsByUsername(@RequestParam String username) {
         List<UserLanguageDto> registrations = userLanguageRegistrationService.findRegistrationsByUsername(username);
         if (registrations.isEmpty()) {
@@ -25,7 +25,7 @@ public class UserLanguageRegistrationController {
         return ResponseEntity.ok(registrations);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/languages/register")
     public ResponseEntity<?> registerLanguage(@RequestBody UserLanguageRegistrationRequest userLanguageRegistrationRequest) {
         try {
             UserLanguageRegistration registration = userLanguageRegistrationService.registerLanguage(userLanguageRegistrationRequest.getUsername(),
@@ -36,7 +36,7 @@ public class UserLanguageRegistrationController {
         }
     }
 
-    @DeleteMapping("/unregister/{username}/{languageId}")
+    @DeleteMapping("/languages/unregister/{username}/{languageId}")
     public ResponseEntity<?> unregisterLanguage(@PathVariable String username, @PathVariable Long languageId) {
         try {
             userLanguageRegistrationService.unregisterLanguage(username, languageId);
