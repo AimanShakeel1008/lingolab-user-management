@@ -34,7 +34,7 @@ public class UserLanguageRegistrationService {
         this.restTemplate = restTemplate;
     }
 
-    private final String LANGUAGE_SERVICE_BASE_URL = "http://localhost:8081/api/languages/";
+    private final String LANGUAGE_SERVICE_BASE_URL = "http://localhost:8082/api/languages/";
 
     public List<UserLanguageDto> findRegistrationsByUsername(String username) {
         User user = userRepository.findByUsername(username)
